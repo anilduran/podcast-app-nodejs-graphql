@@ -1,0 +1,144 @@
+type Query {
+    users: [User!]!
+    podcasts: [Podcast!]!
+    podcastLists: [PodcastList!]!
+    categories: [Category!]!
+    bookmarks: [Bookmark!]!
+    me: User!
+}
+
+type Mutation {
+    signIn(data: SignInInput!): String
+    signUp(data: SignUpInput!): String
+
+    createUser(data: CreateUserInput!): User!
+    updateUser(id: ID!, data: UpdateUserInput): User!
+    deleteUser(id: ID!): User!
+
+    createPodcast(data: CreatePodcastInput!): Podcast!
+    updatePodcast(id: ID!, data: UpdatePodcastInput!): Podcast!
+    deletePodcast(id: ID!): Podcast!
+
+    createPodcastList(data: CreatePodcastListInput): PodcastList!
+    updatePodcastList(id: ID!, data: UpdatePodcastListInput!): PodcastList!
+    deletePodcastList(id: ID!): PodcastList!
+
+    createCategory(data: CreateCategoryInput!): Category!
+    updateCategory(id: ID!, data: UpdateCategoryInput!): Category!
+    deleteCategory(id: ID!): Category!
+
+    createBookmark(data: CreateBookmarkInput!): Bookmark!
+    deleteBookmark(id: ID!): Bookmark!
+}
+
+type User {
+    id: ID!
+    username: String!
+    email: String!
+    password: String!
+    profilePhotoUrl: String
+    podcastLists: [PodcastList!]!
+    podcasts: [Podcast!]!
+    bookmarks: [Bookmark!]!
+}
+
+type Podcast {
+    id: ID!
+    title: String!
+    description: String!
+    imageUrl: String!
+    podcastUrl: String!
+    creator: User!
+}
+
+type PodcastList {
+    id: ID!
+    title: String!
+    description: String!
+    imageUrl: String!
+    creator: User!
+    podcasts: [Podcast!]!
+    categories: [Category!]!
+}
+
+type Category {
+    id: ID!
+    name: String!
+    description: String
+}
+
+type Bookmark {
+    id: ID!
+    podcast: Podcast!
+    user: User!
+}
+
+input CreateUserInput {
+    username: String!
+    email: String!
+    password: String!
+    profilePhotoUrl: String
+}
+
+input UpdateUserInput {
+    username: String!
+    email: String!
+    password: String!
+    profilePhotoUrl: String
+}
+
+input CreatePodcastInput {
+    title: String!
+    description: String!
+    imageUrl: String!
+    podcastUrl: String!
+    creator: ID!
+}
+
+input UpdatePodcastInput {
+    title: String!
+    description: String!
+    imageUrl: String!
+    podcastUrl: String!
+    creator: ID!
+}
+
+input CreatePodcastListInput {
+    title: String!
+    description: String!
+    imageUrl: String!
+    creator: ID!
+}
+
+input UpdatePodcastListInput {
+    title: String!
+    description: String!
+    imageUrl: String!
+    creator: ID!
+}
+
+input CreateCategoryInput {
+    name: String!
+    description: String!
+}
+
+input UpdateCategoryInput {
+    name: String!
+    description: String!
+}
+
+input CreateBookmarkInput {
+    podcast: ID!
+    user: ID!
+}
+
+input SignInInput {
+    email: String!
+    password: String!
+}
+
+input SignUpInput {
+    username: String!
+    email: String!
+    password: String!
+}
