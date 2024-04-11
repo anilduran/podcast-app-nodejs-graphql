@@ -1,13 +1,12 @@
 import User from '../models/User'
 import Podcast from '../models/Podcast'
 import PodcastList from '../models/PodcastList'
-import Bookmark from '../models/Bookmark'
 import Category from '../models/Category'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 const Mutation = {
-    async createUser(parent, args, ctx, info) {
+    async createUser(parent, args, contextValue, info) {
 
         const { username, email, password, profilePhotoUrl } = args.data
 
@@ -18,7 +17,7 @@ const Mutation = {
         return user
 
     },
-    async updateUser(parent, args, ctx, info) {
+    async updateUser(parent, args, contextValue, info) {
         
         const user = await User.findById(args.id)
         
@@ -34,31 +33,31 @@ const Mutation = {
         return user
 
     },
-    async deleteUser(parent, args, ctx, info) {
+    async deleteUser(parent, args, contextValue, info) {
 
         const user = await User.findByIdAndDelete(args.id)
 
         return user
 
     },
-    async createPodcast(parent, args, ctx, info) {
+    async createPodcast(parent, args, contextValue, info) {
 
-        const { title, description, imageUrl, podcastUrl, creator } = args.data
+        const { name, description, imageUrl, podcastUrl, creator } = args.data
 
-        const podcast = new Podcast({ title, description, imageUrl, podcastUrl, creator })
+        const podcast = new Podcast({ name, description, imageUrl, podcastUrl, creator })
 
         await podcast.save()
 
         return podcast
 
     },
-    async updatePodcast(parent, args, ctx, info) {
+    async updatePodcast(parent, args, contextValue, info) {
 
         const podcast = await Podcast.findById(args.id)
 
-        const { title, description, imageUrl, podcastUrl, creator } = args.data
+        const { name, description, imageUrl, podcastUrl, creator } = args.data
 
-        podcast.title = title
+        podcast.name = name
         podcast.description = description
         podcast.imageUrl = imageUrl
         podcast.podcastUrl = podcastUrl
@@ -69,30 +68,30 @@ const Mutation = {
         return podcast
 
     },
-    async deletePodcast(parent, args, ctx, info) {
+    async deletePodcast(parent, args, contextValue, info) {
 
         const podcast = await Podcast.findByIdAndDelete(args.id)
         return podcast
 
     },
-    async createPodcastList(parent, args, ctx, info) {
+    async createPodcastList(parent, args, contextValue, info) {
 
-        const { title, description, imageUrl, creator } = args.data
+        const { name, description, imageUrl, creator } = args.data
 
-        const podcastList = new PodcastList({ title, description, imageUrl, creator })
+        const podcastList = new PodcastList({ name, description, imageUrl, creator })
 
         podcastList.save()
 
         return podcastList
 
     },
-    async updatePodcastList(parent, args, ctx, info) {
+    async updatePodcastList(parent, args, contextValue, info) {
 
         const podcastList = await PodcastList.findById(args.id)
 
-        const { title, description, imageUrl, creator } = args.data
+        const { name, description, imageUrl, creator } = args.data
 
-        podcastList.name = title
+        podcastList.name = name
         podcastList.description = description
         podcastList.imageUrl = imageUrl
         podcastList.creator = creator
@@ -102,31 +101,14 @@ const Mutation = {
         return podcastList
 
     },
-    async deletePodcastList(parent, args, ctx, info) {
+    async deletePodcastList(parent, args, contextValue, info) {
 
         const podcastList = await PodcastList.findByIdAndDelete(args.id)
 
         return podcastList
 
     },
-    async createBookmark(parent, args, ctx, info) {
-        const bookmark = new Bookmark({
-            podcastId: args.data.podcastId,
-            userId: args.data.userId
-        })
-
-        bookmark.save()
-
-        return bookmark
-    },
-    async deleteBookmark(parent, args, ctx, info) {
-
-        const bookmark = await Bookmark.findByIdAndDelete(args.id)
-
-        return bookmark
-
-    },
-    async createCategory(parent, args, ctx, info) {
+    async createCategory(parent, args, contextValue, info) {
 
         const category = new Category({
             name: args.data.name,
@@ -138,7 +120,7 @@ const Mutation = {
         return category
 
     },
-    async updateCategory(parent, args, ctx, info) {
+    async updateCategory(parent, args, contextValue, info) {
 
         const category = await Category.findById(args.id)
 
@@ -150,14 +132,14 @@ const Mutation = {
         return category
 
     },
-    async deleteCategory(parent, args, ctx, info) {
+    async deleteCategory(parent, args, contextValue, info) {
 
         const category = await Category.findByIdAndDelete(args.id)
         
         return category
 
     },
-    async signIn(parent, args, ctx, info) {
+    async signIn(parent, args, contextValue, info) {
   
         const user = await User.findOne({ email: args.data.email })
     
@@ -175,7 +157,7 @@ const Mutation = {
                 username: user.username,
                 email: user.email
             },
-            process.env.SALT,
+            process.env.SECRET,
             {
                 expiresIn: '24h'
             }
@@ -184,7 +166,7 @@ const Mutation = {
         return token
 
     },
-    async signUp(parent, args, ctx, info) {
+    async signUp(parent, args, contextValue, info) {
 
         const userExists = await User.exists({
             $or: [
@@ -217,7 +199,7 @@ const Mutation = {
                 username: user.username,
                 email: user.email
             },
-            process.env.SALT,
+            process.env.SECRET,
             {
                 expiresIn: '24h'
             }
@@ -227,6 +209,21 @@ const Mutation = {
         return token
 
     },
+    async createPlaylist(parent, args, contextValue, info) {
+
+    },
+    async updatePlaylist(parent, args, contextValue, info) {
+
+    },
+    async deletePlaylist(parent, args, contextValue, info) {
+
+    },
+    async addPodcastToPlaylist(parent, args, contextValue, info) {
+
+    },
+    async removePodcastFromPlaylist(parent, args, contextValue, info) {
+        
+    }
 }
 
 export { Mutation as default }

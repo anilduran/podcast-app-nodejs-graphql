@@ -1,15 +1,29 @@
 import mongoose from 'mongoose'
 
-const podcastListSchema = new mongoose.Schema({
-    title: {
+interface IPodcast {
+    name: string
+    description: string
+    imageUrl: string
+    podcastUrl: string
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date
+    creator: mongoose.Schema.Types.ObjectId
+}
+
+const podcastSchema = new mongoose.Schema<IPodcast>({
+    name: {
         type: String,
         required: true
     },
     description: {
+        type: String
+    },
+    imageUrl: {
         type: String,
         required: true
     },
-    imageUrl: {
+    podcastUrl: {
         type: String,
         required: true
     },
@@ -23,20 +37,17 @@ const podcastListSchema = new mongoose.Schema({
         required: true,
         default: Date.now
     },
-    categories: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true,
-            ref: 'Category'
-        }
-    ],
+    deletedAt: {
+        type: Date,
+        required: false
+    },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     }
-})
+});
 
-const PodcastList = mongoose.model('PodcastList', podcastListSchema)
+const Podcast = mongoose.model<IPodcast>('Podcast', podcastSchema)
 
-export { PodcastList as default }
+export { Podcast as default }

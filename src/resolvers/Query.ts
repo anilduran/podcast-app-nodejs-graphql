@@ -1,32 +1,32 @@
 import User from '../models/User'
 import Podcast from '../models/Podcast'
 import PodcastList from '../models/PodcastList'
-import Bookmark from '../models/Bookmark'
 import Category from '../models/Category'
+import authenticate from '../middlewares/authenticate';
 
 const Query = {
-    async users() {
+    async users(parent, args, contextValue, info) {
+        authenticate(contextValue.token)
         const users = await User.find()
         return users
     },
-    async podcasts() {
+    async podcasts(parent, args, contextValue, info) {
+        authenticate(contextValue.token)
         const podcasts = await Podcast.find()
         return podcasts
     },
-    async podcastLists() {
+    async podcastLists(parent, args, contextValue, info) {
+        authenticate(contextValue.token)
         const podcastLists = await PodcastList.find()
         return podcastLists
     },
-    async categories() {
+    async categories(parent, args, contextValue, info) {
+        authenticate(contextValue.token)
         const categories = await Category.find()
         return categories
     },
-    async bookmarks() {
-        const bookmarks = await Bookmark.find()
-        return bookmarks
-    },
-    async me() {
-
+    async me(parent, args, contextValue, info) {
+        authenticate(contextValue.token)
     }
 };
 
