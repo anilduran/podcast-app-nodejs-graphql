@@ -34,6 +34,8 @@ type Mutation {
 
 }
 
+scalar Date
+
 type User {
     id: ID!
     username: String!
@@ -42,6 +44,11 @@ type User {
     profilePhotoUrl: String
     podcastLists: [PodcastList!]!
     podcasts: [Podcast!]!
+    playlists: [Playlist!]!
+    isDeleted: Boolean!
+    createdAt: Date!
+    updatedAt: Date!
+    deletedAt: Date    
 }
 
 type Podcast {
@@ -52,6 +59,10 @@ type Podcast {
     podcastUrl: String!
     creator: User!
     isVisible: Boolean!
+    isDeleted: Boolean!
+    createdAt: Date!
+    updatedAt: Date!
+    deletedAt: Date
 }
 
 type PodcastList {
@@ -63,6 +74,10 @@ type PodcastList {
     podcasts: [Podcast!]!
     categories: [Category!]!
     isVisible: Boolean!
+    isDeleted: Boolean!
+    createdAt: Date!
+    updatedAt: Date!
+    deletedAt: Date
 }
 
 type Playlist {
@@ -72,6 +87,10 @@ type Playlist {
     imageUrl: String!
     creator: User
     podcasts: [Podcast!]!
+    isDeleted: Boolean!
+    createdAt: Date!
+    updatedAt: Date!
+    deletedAt: Date
 }
 
 type Category {

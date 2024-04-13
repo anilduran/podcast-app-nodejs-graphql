@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql'
 import jwt, { JsonWebTokenError } from 'jsonwebtoken'
 
-const authenticate = (token: string) => {
+const authenticate = (token: string): { id: string, username: string, email: string } => {
 
     try {
 
@@ -11,7 +11,7 @@ const authenticate = (token: string) => {
             throw new GraphQLError('User is not authenticated!')
         }
 
-        return user
+        return user as { id: string, username: string, email: string }
 
     } catch(error) {
         if (error.name === 'TokenExpiredError') {

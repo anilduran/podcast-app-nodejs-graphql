@@ -5,10 +5,13 @@ interface IPodcast {
     description: string
     imageUrl: string
     podcastUrl: string
+    podcastList: mongoose.Schema.Types.ObjectId
+    creator: mongoose.Schema.Types.ObjectId
+    isVisible: boolean
+    isDeleted: boolean
     createdAt: Date
     updatedAt: Date
     deletedAt: Date
-    creator: mongoose.Schema.Types.ObjectId
 }
 
 const podcastSchema = new mongoose.Schema<IPodcast>({
@@ -27,6 +30,24 @@ const podcastSchema = new mongoose.Schema<IPodcast>({
         type: String,
         required: true
     },
+    podcastList: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PodcastList'
+    },
+    creator: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    isVisible: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
+    isDeleted: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -41,11 +62,7 @@ const podcastSchema = new mongoose.Schema<IPodcast>({
         type: Date,
         required: false
     },
-    creator: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User'
-    }
+   
 });
 
 const Podcast = mongoose.model<IPodcast>('Podcast', podcastSchema)

@@ -4,6 +4,9 @@ interface IPlaylist {
     name: string
     description: string
     imageUrl: string
+    creator: mongoose.Schema.Types.ObjectId
+    podcasts: Array<mongoose.Schema.Types.ObjectId>
+    isDeleted: boolean
     createdAt: Date
     updatedAt: Date
     deletedAt: Date
@@ -20,6 +23,21 @@ const playlistSchema = new mongoose.Schema<IPlaylist>({
     imageUrl: {
         type: String,
         required: true
+    },
+    creator: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    podcasts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Podcast'
+        }
+    ],
+    isDeleted: {
+        type: Boolean,
+        required: true,
+        default: false
     },
     createdAt: {
         type: Date,

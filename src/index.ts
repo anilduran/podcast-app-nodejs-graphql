@@ -10,6 +10,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
+import Playlist from './resolvers/Playlist'
 
 dotenv.config({
     path: __dirname + '/.env'
@@ -24,7 +25,8 @@ const server = new ApolloServer({
         User,
         Podcast,
         PodcastList,
-        Category
+        Category,
+        Playlist
     }    
 })
 

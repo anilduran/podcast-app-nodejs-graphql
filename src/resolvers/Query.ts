@@ -26,7 +26,11 @@ const Query = {
         return categories
     },
     async me(parent, args, contextValue, info) {
-        authenticate(contextValue.token)
+        const authenticatedUser = authenticate(contextValue.token)
+
+        const user = await User.findById(authenticatedUser.id)
+
+        return user
     }
 };
 

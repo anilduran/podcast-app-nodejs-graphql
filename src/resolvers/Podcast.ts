@@ -1,10 +1,13 @@
+import PodcastList from '../models/PodcastList'
 import User from '../models/User'
 
 const Podcast = {
     async creator(parent, args, contextValue, info) {
+        
         const user = await User.findById(parent.creator)
 
-        return user       
+        return user
+
     }
 }
 

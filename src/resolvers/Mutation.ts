@@ -4,9 +4,14 @@ import PodcastList from '../models/PodcastList'
 import Category from '../models/Category'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import Playlist from '../models/Playlist'
+import authenticate from '../middlewares/authenticate'
+import { GraphQLError } from 'graphql'
 
 const Mutation = {
     async createUser(parent, args, contextValue, info) {
+
+        authenticate(contextValue.token)
 
         const { username, email, password, profilePhotoUrl } = args.data
 
@@ -18,33 +23,62 @@ const Mutation = {
 
     },
     async updateUser(parent, args, contextValue, info) {
+
+        const authenticatedUser = authenticate(contextValue.token)
         
         const user = await User.findById(args.id)
+
+        if (user.id != authenticatedUser.id) {
+            throw new GraphQLError('You are not authorized to update this user!')
+        }
         
         const { username, email, password, profilePhotoUrl } = args.data
 
-        user.username = username
-        user.email = email
-        user.password = password
-        user.profilePhotoUrl = profilePhotoUrl
+        if (username) {
+            user.username = username
+        }
 
-        user.save()
+        if (email) {
+            user.email = email
+        }
+
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10)
+         
+            user.password = hashedPassword
+        }
+
+        if (profilePhotoUrl) {
+            user.profilePhotoUrl = profilePhotoUrl
+        }
+
+        await user.save()
 
         return user
 
     },
     async deleteUser(parent, args, contextValue, info) {
 
-        const user = await User.findByIdAndDelete(args.id)
+        const authenticatedUser = authenticate(contextValue.token)
 
-        return user
+        const user = await User.findById(args.id)
+
+        if (authenticatedUser.id != user.id) {
+            throw new GraphQLError('You are not authorized to delete this user!')
+        }
+
+        const deletedUser = await User.findByIdAndDelete(args.id)
+
+        return deletedUser
 
     },
     async createPodcast(parent, args, contextValue, info) {
 
-        const { name, description, imageUrl, podcastUrl, creator } = args.data
+        const user = authenticate(contextValue.token)
 
-        const podcast = new Podcast({ name, description, imageUrl, podcastUrl, creator })
+        const { name, description, imageUrl, podcastUrl, isVisible } = args.data
+
+        const podcast = new Podcast({ name, description, imageUrl, podcastUrl, creator: user.id, isVisible })
 
         await podcast.save()
 
@@ -53,15 +87,37 @@ const Mutation = {
     },
     async updatePodcast(parent, args, contextValue, info) {
 
+        const user = authenticate(contextValue.token)
+
+        const { name, description, imageUrl, podcastUrl, isVisible } = args.data
+
         const podcast = await Podcast.findById(args.id)
 
-        const { name, description, imageUrl, podcastUrl, creator } = args.data
+        const podcastList = await PodcastList.findById(podcast.podcastList)
 
-        podcast.name = name
-        podcast.description = description
-        podcast.imageUrl = imageUrl
-        podcast.podcastUrl = podcastUrl
-        podcast.creator = creator
+        if (podcastList.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to update this podcast!')
+        }
+
+        if (name) {
+            podcast.name = name
+        }
+
+        if (description) {
+            podcast.description = description
+        }
+
+        if (imageUrl) {
+            podcast.imageUrl = imageUrl
+        }
+        
+        if (podcastUrl) {
+            podcast.podcastUrl = podcastUrl
+        }
+
+        if (typeof isVisible !== 'undefined' || isVisible !== null) {
+            podcast.isVisible = isVisible
+        }
 
         await podcast.save()
 
@@ -70,15 +126,28 @@ const Mutation = {
     },
     async deletePodcast(parent, args, contextValue, info) {
 
-        const podcast = await Podcast.findByIdAndDelete(args.id)
-        return podcast
+        const user = authenticate(contextValue.token)
+
+        const podcast = await Podcast.findById(args.id)
+
+        const podcastList = await PodcastList.findById(podcast.podcastList)
+
+        if (podcastList.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to delete this podcast!')
+        }
+
+        const deletedPodcast = await Podcast.findByIdAndDelete(podcast.id)
+
+        return deletedPodcast
 
     },
     async createPodcastList(parent, args, contextValue, info) {
 
-        const { name, description, imageUrl, creator } = args.data
+        const user = authenticate(contextValue.token)
 
-        const podcastList = new PodcastList({ name, description, imageUrl, creator })
+        const { name, description, imageUrl, isVisible } = args.data
+
+        const podcastList = new PodcastList({ name, description, imageUrl, creator: user.id, isVisible })
 
         podcastList.save()
 
@@ -87,28 +156,55 @@ const Mutation = {
     },
     async updatePodcastList(parent, args, contextValue, info) {
 
+        const user = authenticate(contextValue.token)
+
         const podcastList = await PodcastList.findById(args.id)
 
-        const { name, description, imageUrl, creator } = args.data
+        if (podcastList.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to update this podcast list!')
+        }
 
-        podcastList.name = name
-        podcastList.description = description
-        podcastList.imageUrl = imageUrl
-        podcastList.creator = creator
+        const { name, description, imageUrl, isVisible } = args.data
 
-        podcastList.save()
+        if (name) {
+            podcastList.name = name
+        }
+
+        if (description) {
+            podcastList.description = description
+        }
+
+        if (imageUrl) {
+            podcastList.imageUrl = imageUrl
+        }
+
+        if (typeof isVisible !== 'undefined' || isVisible !== null) {
+            podcastList.isVisible = isVisible
+        }
+
+        await podcastList.save()
 
         return podcastList
 
     },
     async deletePodcastList(parent, args, contextValue, info) {
 
-        const podcastList = await PodcastList.findByIdAndDelete(args.id)
+        const user = authenticate(contextValue.token)
 
-        return podcastList
+        const podcastList = await PodcastList.findById(args.id)
+
+        if (podcastList.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to delete this podcast list!')
+        }
+
+        const deletedPodcastList = await PodcastList.findByIdAndDelete(args.id)
+
+        return deletedPodcastList
 
     },
     async createCategory(parent, args, contextValue, info) {
+
+        authenticate(contextValue.token)
 
         const category = new Category({
             name: args.data.name,
@@ -122,10 +218,19 @@ const Mutation = {
     },
     async updateCategory(parent, args, contextValue, info) {
 
+        authenticate(contextValue.token)
+
         const category = await Category.findById(args.id)
 
-        category.name = args.data.name
-        category.description = args.data.description
+        const { name, description } = args.data
+
+        if (name) {
+            category.name = name
+        }
+
+        if (description) {
+            category.description = description
+        }
 
         await category.save()
 
@@ -133,6 +238,8 @@ const Mutation = {
 
     },
     async deleteCategory(parent, args, contextValue, info) {
+
+        authenticate(contextValue.token)
 
         const category = await Category.findByIdAndDelete(args.id)
         
@@ -210,18 +317,87 @@ const Mutation = {
 
     },
     async createPlaylist(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const { name, description, imageUrl } = args.data
+
+        const playlist = new Playlist({ name, description, imageUrl, creator: user.id })
+
+        await playlist.save()
+
+        return playlist
 
     },
     async updatePlaylist(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const playlist = await Playlist.findById(args.id)
+
+        if (playlist.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to update this playlist!')
+        }
+
+        const { name, description, imageUrl } = args.data
+        
+        if (name) {
+            playlist.name = name
+        }
+
+        if (description) {
+            playlist.description = description
+        }
+
+        if (imageUrl) {
+            playlist.imageUrl = imageUrl
+        }
+
+        await playlist.save()
+
+        return playlist
 
     },
     async deletePlaylist(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const playlist = await Playlist.findById(args.id)
+
+        if (playlist.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to delete this playlist!')
+        }
+
+        const deletedPlaylist = await Playlist.findByIdAndDelete(playlist.id)
+
+        return deletedPlaylist
 
     },
     async addPodcastToPlaylist(parent, args, contextValue, info) {
 
+        const user = authenticate(contextValue.token)
+        
+        const playlist = await Playlist.findById(args.playlist)
+
+        if (playlist.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to perform this action!')
+        }
+
+        const podcast = await Podcast.findById(args.podcast)
+        
+        playlist.podcasts.push(args.podcast)
+        
+        await playlist.save()
+
+        return podcast
+
     },
     async removePodcastFromPlaylist(parent, args, contextValue, info) {
+
+        const user = authenticate(contextValue.token)
+
+        const playlist = await Playlist.findById(args.playlist)
+
+        if (playlist.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to perform this action!')
+        }
         
     }
 }

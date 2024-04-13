@@ -4,11 +4,13 @@ interface IPodcastList {
     name: string
     description: string
     imageUrl: string
-    createdAt: Date
-    updatedAt: Date
-    deletedAt: Date
     categories: Array<mongoose.Schema.Types.ObjectId>
     creator: mongoose.Schema.Types.ObjectId
+    isVisible: boolean
+    isDeleted: boolean
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date   
 }
 
 const podcastListSchema = new mongoose.Schema<IPodcastList>({
@@ -23,16 +25,6 @@ const podcastListSchema = new mongoose.Schema<IPodcastList>({
         type: String,
         required: true
     },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
     categories: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -44,6 +36,29 @@ const podcastListSchema = new mongoose.Schema<IPodcastList>({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
+    },
+    isVisible: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
+    isDeleted: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    deletedAt: {
+        type: Date
     }
 })
 

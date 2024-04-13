@@ -5,6 +5,10 @@ interface IUser {
     email: string
     password: string
     profilePhotoUrl: string
+    isDeleted: boolean
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -23,6 +27,24 @@ const userSchema = new mongoose.Schema<IUser>({
     profilePhotoUrl: {
         type: String,
         required: false
+    },
+    isDeleted: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    deletedAt: {
+        type: Date
     }
 })
 
