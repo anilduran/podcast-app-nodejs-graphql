@@ -4,8 +4,8 @@ interface IPlaylist {
     name: string
     description: string
     imageUrl: string
-    creator: mongoose.Schema.Types.ObjectId
-    podcasts: Array<mongoose.Schema.Types.ObjectId>
+    creator: mongoose.Types.ObjectId
+    podcasts: Array<mongoose.Types.ObjectId>
     isDeleted: boolean
     createdAt: Date
     updatedAt: Date

@@ -6,8 +6,8 @@ interface IPodcastListComment {
     updatedAt: Date
     deletedAt: Date
     isDeleted: boolean
-    user: mongoose.Schema.Types.ObjectId
-    podcastList: mongoose.Schema.Types.ObjectId
+    user: mongoose.Types.ObjectId
+    podcastList: mongoose.Types.ObjectId
 }
 
 const podcastListCommentSchema = new mongoose.Schema<IPodcastListComment>({

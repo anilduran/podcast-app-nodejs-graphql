@@ -4,8 +4,8 @@ interface IPodcastList {
     name: string
     description: string
     imageUrl: string
-    categories: Array<mongoose.Schema.Types.ObjectId>
-    creator: mongoose.Schema.Types.ObjectId
+    categories: Array<mongoose.Types.ObjectId>
+    creator: mongoose.Types.ObjectId
     isVisible: boolean
     isDeleted: boolean
     createdAt: Date

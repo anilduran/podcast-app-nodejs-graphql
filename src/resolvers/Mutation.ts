@@ -493,6 +493,62 @@ const Mutation = {
 
         return deletedPodcastListComment
 
+    },
+    async subscribePodcastList(parent, args, contextValue, info) {
+        const authenticatedUser = authenticate(contextValue.token)
+        
+        const podcastList = await PodcastList.findById(args.id)
+        
+        const user = await User.findById(authenticatedUser.id)
+
+        if (podcastList.creator == user.id) {
+            throw new GraphQLError('You can\'t subscribe to your podcast list!')
+        }
+
+        user.subscribedPodcastLists.push(podcastList.id)
+
+        await user.save()
+
+        return podcastList
+
+    },
+    async unsubscribePodcastList(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const podcastList = await PodcastList.findById(args.id)
+
+        await User.updateOne({ _id: user.id }, { $pull: { subscribedPodcastLists: podcastList.id } })
+
+        return podcastList
+
+    },
+    async likePodcast(parent, args, contextValue, info) {
+        const authenticatedUser = await authenticate(contextValue.token)
+
+        const podcast = await Podcast.findById(args.id)
+
+        const user = await User.findById(authenticatedUser.id)
+
+        if (podcast.creator == user.id) {
+            throw new GraphQLError('You can\'t like your podcast!')
+        }
+
+        user.likedPodcasts.push(podcast.id)
+
+        await user.save()
+
+        return podcast
+
+    },
+    async unlikePodcast(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const podcast = await Podcast.findById(args.id)
+
+        await User.updateOne({ _id: user.id }, { $pull: { likedPodcasts: podcast.id } })
+
+        return podcast
+
     }
 }
 

@@ -6,6 +6,8 @@ interface IUser {
     password: string
     profilePhotoUrl: string
     isDeleted: boolean
+    likedPodcasts: Array<mongoose.Types.ObjectId>
+    subscribedPodcastLists: Array<mongoose.Types.ObjectId>
     createdAt: Date
     updatedAt: Date
     deletedAt: Date
@@ -28,6 +30,18 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         required: false
     },
+    likedPodcasts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Podcast'            
+        }
+    ],
+    subscribedPodcastLists: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'PodcastList'
+        }
+    ],
     isDeleted: {
         type: Boolean,
         required: true,

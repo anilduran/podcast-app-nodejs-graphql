@@ -41,6 +41,12 @@ type Mutation {
     createPodcastListComment(data: CreatePodcastListCommentInput!): PodcastListComment!
     updatePodcastListComment(id: ID!, data: UpdatePodcastListCommentInput!): PodcastListComment!
     deletePodcastListComment(id: ID!): PodcastListComment!
+    
+    likePodcast(id: ID!): Podcast!
+    unlikePodcast(id: ID!): Podcast!
+
+    subscribePodcastList(id: ID!): PodcastList!
+    unsubscribePodcastList(id: ID!): PodcastList!
 
 }
 
@@ -55,6 +61,8 @@ type User {
     podcastLists: [PodcastList!]!
     podcasts: [Podcast!]!
     playlists: [Playlist!]!
+    subscribedPodcastLists: [PodcastList!]!
+    likedPodcasts: [Podcast!]!
     isDeleted: Boolean!
     createdAt: Date!
     updatedAt: Date!
