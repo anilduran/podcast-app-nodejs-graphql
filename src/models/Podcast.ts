@@ -36,7 +36,8 @@ const podcastSchema = new mongoose.Schema<IPodcast>({
     },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     isVisible: {
         type: Boolean,

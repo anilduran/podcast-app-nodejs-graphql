@@ -4,6 +4,8 @@ type Query {
     podcastLists: [PodcastList!]!
     categories: [Category!]!
     me: User!
+    podcastComments: [PodcastComment!]!
+    podcastListComments: [PodcastListComment!]!
 }
 
 type Mutation {
@@ -31,6 +33,14 @@ type Mutation {
     createCategory(data: CreateCategoryInput!): Category!
     updateCategory(id: ID!, data: UpdateCategoryInput!): Category!
     deleteCategory(id: ID!): Category!
+
+    createPodcastComment(data: CreatePodcastCommentInput!): PodcastComment!
+    updatePodcastComment(id: ID!, data: UpdatePodcastCommentInput!): PodcastComment!
+    deletePodcastComment(id: ID!): PodcastComment!
+
+    createPodcastListComment(data: CreatePodcastListCommentInput!): PodcastListComment!
+    updatePodcastListComment(id: ID!, data: UpdatePodcastListCommentInput!): PodcastListComment!
+    deletePodcastListComment(id: ID!): PodcastListComment!
 
 }
 
@@ -63,6 +73,7 @@ type Podcast {
     createdAt: Date!
     updatedAt: Date!
     deletedAt: Date
+    comments: [PodcastComment!]!
 }
 
 type PodcastList {
@@ -78,6 +89,7 @@ type PodcastList {
     createdAt: Date!
     updatedAt: Date!
     deletedAt: Date
+    comments: [PodcastListComment!]!
 }
 
 type Playlist {
@@ -97,6 +109,26 @@ type Category {
     id: ID!
     name: String!
     description: String
+}
+
+type PodcastComment {
+    content: String!
+    user: User!
+    podcast: Podcast!
+    isDeleted: Boolean!
+    createdAt: Date!
+    updatedAt: Date!
+    deletedAt: Date
+}
+
+type PodcastListComment {
+    content: String!
+    user: User!
+    podcastList: PodcastList!
+    isDeleted: Boolean!
+    createdAt: Date!
+    updatedAt: Date!
+    deletedAt: Date
 }
 
 
@@ -177,3 +209,20 @@ input UpdatePlaylistInput {
     imageUrl: String
 }
 
+input CreatePodcastCommentInput {
+    content: String!
+    podcast: ID!
+}
+
+input UpdatePodcastCommentInput {
+    content: String
+}
+
+input CreatePodcastListCommentInput {
+    content: String!
+    podcastList: ID!
+}
+
+input UpdatePodcastListCommentInput {
+    content: String
+}

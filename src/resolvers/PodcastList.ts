@@ -2,6 +2,7 @@ import User from '../models/User'
 import Podcast from '../models/Podcast'
 import Category from '../models/Category'
 import { default as PodcastListModel } from '../models/PodcastList'
+import PodcastListComment from '../models/PodcastListComment'
 
 const PodcastList = {
     async creator(parent, args, contextValue, info) {
@@ -21,6 +22,10 @@ const PodcastList = {
 
         return podcastList.categories
 
+    },
+    async comments(parent, args, contextValue, info) {
+        const comments = await PodcastListComment.find({ podcastList: parent.id })
+        return comments
     }
 }
 

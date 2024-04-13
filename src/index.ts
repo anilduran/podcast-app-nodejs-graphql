@@ -11,6 +11,8 @@ import dotenv from 'dotenv'
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
 import Playlist from './resolvers/Playlist'
+import PodcastComment from './resolvers/PodcastComment'
+import PodcastListComment from './resolvers/PodcastListComment'
 
 dotenv.config({
     path: __dirname + '/.env'
@@ -26,7 +28,9 @@ const server = new ApolloServer({
         Podcast,
         PodcastList,
         Category,
-        Playlist
+        Playlist,
+        PodcastComment,
+        PodcastListComment
     }    
 })
 

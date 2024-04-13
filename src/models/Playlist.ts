@@ -26,7 +26,8 @@ const playlistSchema = new mongoose.Schema<IPlaylist>({
     },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     podcasts: [
         {

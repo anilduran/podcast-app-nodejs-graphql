@@ -1,3 +1,4 @@
+import PodcastComment from '../models/PodcastComment'
 import PodcastList from '../models/PodcastList'
 import User from '../models/User'
 
@@ -8,6 +9,10 @@ const Podcast = {
 
         return user
 
+    },
+    async comments(parent, args, contextValue, info) {
+        const comments = await PodcastComment.find({ podcast: parent.id })
+        return comments
     }
 }
 

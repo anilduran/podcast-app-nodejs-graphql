@@ -3,6 +3,8 @@ import Podcast from '../models/Podcast'
 import PodcastList from '../models/PodcastList'
 import Category from '../models/Category'
 import authenticate from '../middlewares/authenticate';
+import PodcastComment from '../models/PodcastComment';
+import PodcastListComment from '../models/PodcastListComment';
 
 const Query = {
     async users(parent, args, contextValue, info) {
@@ -31,6 +33,16 @@ const Query = {
         const user = await User.findById(authenticatedUser.id)
 
         return user
+    },
+    async podcastComments(parent, args, contextValue, info) {
+        authenticate(contextValue.token)
+        const podcastComments = await PodcastComment.find()
+        return podcastComments
+    },
+    async podcastListComments(parent, args, contextValue, info) {
+        authenticate(contextValue.token)
+        const podcastListComments = await PodcastListComment.find()
+        return podcastListComments
     }
 };
 

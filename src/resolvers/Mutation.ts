@@ -7,6 +7,8 @@ import bcrypt from 'bcrypt'
 import Playlist from '../models/Playlist'
 import authenticate from '../middlewares/authenticate'
 import { GraphQLError } from 'graphql'
+import PodcastComment from '../models/PodcastComment'
+import PodcastListComment from '../models/PodcastListComment'
 
 const Mutation = {
     async createUser(parent, args, contextValue, info) {
@@ -399,6 +401,98 @@ const Mutation = {
             throw new GraphQLError('You are not authorized to perform this action!')
         }
         
+    },
+    async createPodcastComment(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+        
+        const podcastComment = new PodcastComment({
+            content: args.data.content,
+            podcast: args.data.podcast,
+            user: user.id
+        })
+
+        await podcastComment.save()
+
+        return podcastComment
+
+    },
+    async updatePodcastComment(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const podcastComment = await PodcastComment.findById(args.id)
+
+        if (podcastComment.user.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to update this podcast comment!')
+        }
+
+        if (args.data.content) {
+            podcastComment.content = args.data.content
+        }
+
+        await podcastComment.save()
+
+        return podcastComment
+
+    },
+    async deletePodcastComment(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const podcastComment = await PodcastComment.findById(args.id)
+
+        if (podcastComment.user.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to delete this podcast comment!')
+        }
+
+        const deletedPodcastComment = await PodcastComment.findByIdAndDelete(args.id)
+
+        return deletedPodcastComment
+
+    },
+    async createPodcastListComment(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const podcastListComment = new PodcastListComment({
+            content: args.data.content,
+            podcastList: args.data.podcastList,
+            user: user.id
+        })
+
+        await podcastListComment.save()
+
+        return podcastListComment
+
+    },
+    async updatePodcastListComment(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const podcastListComment = await PodcastListComment.findById(args.id)
+
+        if (podcastListComment.user.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to update this podcast list comment!')
+        }
+
+        if (args.data.content) {
+            podcastListComment.content = args.data.content
+        }
+
+        await podcastListComment.save()
+
+        return podcastListComment
+
+    },
+    async deletePodcastListComment(parent, args, contextValue, info) {
+        const user = authenticate(contextValue.token)
+
+        const podcastListComment = await PodcastListComment.findById(args.id)
+
+        if (podcastListComment.user.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to delete this podcast list comment!')
+        }
+
+        const deletedPodcastListComment = await PodcastListComment.findByIdAndDelete(args.id)
+
+        return deletedPodcastListComment
+
     }
 }
 
