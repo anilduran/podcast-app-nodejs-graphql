@@ -9,6 +9,10 @@ import authenticate from '../middlewares/authenticate'
 import { GraphQLError } from 'graphql'
 import PodcastComment from '../models/PodcastComment'
 import PodcastListComment from '../models/PodcastListComment'
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import s3 from '../utils/s3'
+import { v4 as uuidv4 } from 'uuid'
 
 const Mutation = {
     async createUser(parent, args, contextValue, info) {
@@ -548,6 +552,40 @@ const Mutation = {
         await User.updateOne({ _id: user.id }, { $pull: { likedPodcasts: podcast.id } })
 
         return podcast
+
+    },
+    async getPresignedUrlForImage(parent, args, contextValue, info) {
+
+        const user = authenticate(contextValue.token)
+
+        const key = `images/${user.id}/${uuidv4()}.jpeg`
+
+        const command = new PutObjectCommand({
+            Bucket: process.env.bucket,
+            Key: key,
+            ContentType: 'image/jpeg'
+        })
+
+        const url = getSignedUrl(s3, command, { expiresIn: 60 * 5 })
+
+        return { url, key }
+
+    },
+    async getPresignedUrlForPodcast(parent, args, contextValue, info) {
+
+        const user = authenticate(contextValue.token)
+
+        const key = `podcasts/${user.id}/${uuidv4()}.mp3`
+
+        const command = new PutObjectCommand({
+            Bucket: process.env.bucket,
+            Key: key,
+            ContentType: 'audio/mp3'
+        })
+
+        const url = getSignedUrl(s3, command, { expiresIn: 60 * 5 })
+
+        return { url, key }
 
     }
 }

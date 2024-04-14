@@ -48,6 +48,9 @@ type Mutation {
     subscribePodcastList(id: ID!): PodcastList!
     unsubscribePodcastList(id: ID!): PodcastList!
 
+    getPresignedUrlForImage: PresignedUrlResponse!
+    getPresignedUrlForPodcast: PresignedUrlResponse!
+
 }
 
 scalar Date
@@ -117,6 +120,7 @@ type Category {
     id: ID!
     name: String!
     description: String
+    podcastLists: [PodcastList!]!
 }
 
 type PodcastComment {
@@ -233,4 +237,9 @@ input CreatePodcastListCommentInput {
 
 input UpdatePodcastListCommentInput {
     content: String
+}
+
+type PresignedUrlResponse {
+    key: String!
+    url: String!
 }
