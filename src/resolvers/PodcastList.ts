@@ -1,6 +1,4 @@
 import User from '../models/User'
-import Podcast from '../models/Podcast'
-import Category from '../models/Category'
 import { default as PodcastListModel } from '../models/PodcastList'
 import PodcastListComment from '../models/PodcastListComment'
 
@@ -11,9 +9,9 @@ const PodcastList = {
     },
     async podcasts(parent, args, contextValue, info) {
 
-        const podcasts = await Podcast.find({ podcastList: parent.id })
+       const podcastList = await PodcastListModel.findById(parent.id).populate('podcasts').exec()
 
-        return podcasts
+       return podcastList.podcasts
 
     },
     async categories(parent, args, contextValue, info) {

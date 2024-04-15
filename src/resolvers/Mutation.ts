@@ -82,9 +82,9 @@ const Mutation = {
 
         const user = authenticate(contextValue.token)
 
-        const { name, description, imageUrl, podcastUrl, isVisible } = args.data
+        const { name, description, imageUrl, podcastUrl, isVisible, categories } = args.data
 
-        const podcast = new Podcast({ name, description, imageUrl, podcastUrl, creator: user.id, isVisible })
+        const podcast = new Podcast({ name, description, imageUrl, podcastUrl, creator: user.id, isVisible, categories })
 
         await podcast.save()
 
@@ -95,7 +95,7 @@ const Mutation = {
 
         const user = authenticate(contextValue.token)
 
-        const { name, description, imageUrl, podcastUrl, isVisible } = args.data
+        const { name, description, imageUrl, podcastUrl, isVisible, categories } = args.data
 
         const podcast = await Podcast.findById(args.id)
 
@@ -125,6 +125,10 @@ const Mutation = {
             podcast.isVisible = isVisible
         }
 
+        if (categories) {
+            podcast.categories = categories
+        }
+
         await podcast.save()
 
         return podcast
@@ -151,9 +155,9 @@ const Mutation = {
 
         const user = authenticate(contextValue.token)
 
-        const { name, description, imageUrl, isVisible } = args.data
+        const { name, description, imageUrl, isVisible, categories } = args.data
 
-        const podcastList = new PodcastList({ name, description, imageUrl, creator: user.id, isVisible })
+        const podcastList = new PodcastList({ name, description, imageUrl, creator: user.id, isVisible, categories })
 
         podcastList.save()
 
@@ -170,7 +174,7 @@ const Mutation = {
             throw new GraphQLError('You are not authorized to update this podcast list!')
         }
 
-        const { name, description, imageUrl, isVisible } = args.data
+        const { name, description, imageUrl, isVisible, categories } = args.data
 
         if (name) {
             podcastList.name = name
@@ -186,6 +190,10 @@ const Mutation = {
 
         if (typeof isVisible !== 'undefined' || isVisible !== null) {
             podcastList.isVisible = isVisible
+        }
+
+        if (categories) {
+            podcastList.categories = categories
         }
 
         await podcastList.save()
@@ -586,6 +594,50 @@ const Mutation = {
         const url = getSignedUrl(s3, command, { expiresIn: 60 * 5 })
 
         return { url, key }
+
+    },
+    async addPodcastToPodcastList(parent, args, contextValue, info) {
+
+        const user = authenticate(contextValue.token)
+
+        const podcastList = await PodcastList.findById(args.podcastList)
+
+        if (podcastList.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to modify this podcast list!')
+        }
+
+        const podcast = await Podcast.findById(args.podcast)
+
+        if (podcast.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to add this podcast to the podcast list!')
+        }
+
+        podcastList.podcasts.push(podcast.id)
+        
+        await podcastList.save()
+
+        return podcast
+
+    },
+    async removePodcastFromPodcastList(parent, args, contextValue, info) {
+
+        const user = authenticate(contextValue.token)
+
+        const podcastList = await PodcastList.findById(args.podcastList)
+
+        if (podcastList.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to modify this podcast list!')
+        }
+
+        const podcast = await Podcast.findById(args.podcast)
+
+        if (podcast.creator.toString() != user.id) {
+            throw new GraphQLError('You are not authorized to remove this podcast from the podcast list!')
+        }
+
+        await PodcastList.updateOne({ _id: podcastList.id }, { $pull: { podcasts: podcast.id } })
+
+        return podcast
 
     }
 }

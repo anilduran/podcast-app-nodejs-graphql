@@ -5,6 +5,7 @@ interface IPodcastList {
     description: string
     imageUrl: string
     categories: Array<mongoose.Types.ObjectId>
+    podcasts: Array<mongoose.Types.ObjectId>
     creator: mongoose.Types.ObjectId
     isVisible: boolean
     isDeleted: boolean
@@ -30,6 +31,13 @@ const podcastListSchema = new mongoose.Schema<IPodcastList>({
             type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'Category'
+        }
+    ],
+    podcasts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'Podcast'
         }
     ],
     creator: {

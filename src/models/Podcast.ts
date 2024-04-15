@@ -7,6 +7,7 @@ interface IPodcast {
     podcastUrl: string
     podcastList: mongoose.Types.ObjectId
     creator: mongoose.Types.ObjectId
+    categories: Array<mongoose.Types.ObjectId>
     isVisible: boolean
     isDeleted: boolean
     createdAt: Date
@@ -30,15 +31,18 @@ const podcastSchema = new mongoose.Schema<IPodcast>({
         type: String,
         required: true
     },
-    podcastList: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'PodcastList'
-    },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
+    categories: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Category',
+            required: true
+        }
+    ],
     isVisible: {
         type: Boolean,
         required: true,

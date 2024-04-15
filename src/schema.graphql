@@ -19,6 +19,8 @@ type Mutation {
     createPodcast(data: CreatePodcastInput!): Podcast!
     updatePodcast(id: ID!, data: UpdatePodcastInput!): Podcast!
     deletePodcast(id: ID!): Podcast!
+    addPodcastToPodcastList(podcast: ID!, podcastList: ID!): Podcast!
+    removePodcastFromPodcastList(podcast: ID!, podcastList: ID!): Podcast!
 
     createPodcastList(data: CreatePodcastListInput): PodcastList!
     updatePodcastList(id: ID!, data: UpdatePodcastListInput!): PodcastList!
@@ -164,6 +166,7 @@ input CreatePodcastInput {
     imageUrl: String!
     podcastUrl: String!
     isVisible: Boolean!
+    categories: [ID!]!
 }
 
 input UpdatePodcastInput {
@@ -172,6 +175,7 @@ input UpdatePodcastInput {
     imageUrl: String
     podcastUrl: String
     isVisible: Boolean!
+    categories: [ID!]
 }
 
 input CreatePodcastListInput {
@@ -179,6 +183,7 @@ input CreatePodcastListInput {
     description: String
     imageUrl: String!
     isVisible: Boolean!
+    categories: [ID!]!
 }
 
 input UpdatePodcastListInput {
@@ -186,6 +191,7 @@ input UpdatePodcastListInput {
     description: String
     imageUrl: String
     isVisible: Boolean!
+    categories: [ID!]
 }
 
 input CreateCategoryInput {
