@@ -566,34 +566,43 @@ const Mutation = {
 
         const user = authenticate(contextValue.token)
 
-        const key = `images/${user.id}/${uuidv4()}.jpeg`
+        try {
+            const key = `images/${user.id}/${uuidv4()}.jpeg`
 
-        const command = new PutObjectCommand({
-            Bucket: process.env.bucket,
-            Key: key,
-            ContentType: 'image/jpeg'
-        })
+            const command = new PutObjectCommand({
+                Bucket: process.env.bucket,
+                Key: key,
+                ContentType: 'image/jpeg'
+            })
+            
+            const url = await getSignedUrl(s3, command, { expiresIn: 60 * 5 })
 
-        const url = getSignedUrl(s3, command, { expiresIn: 60 * 5 })
+            return { url, key }
 
-        return { url, key }
+        } catch(error) {
+            throw new GraphQLError('Failed to create presigned url!')
+        }
 
     },
     async getPresignedUrlForPodcast(parent, args, contextValue, info) {
 
         const user = authenticate(contextValue.token)
 
-        const key = `podcasts/${user.id}/${uuidv4()}.mp3`
+        try {
+            const key = `podcasts/${user.id}/${uuidv4()}.mp3`
 
-        const command = new PutObjectCommand({
-            Bucket: process.env.bucket,
-            Key: key,
-            ContentType: 'audio/mp3'
-        })
-
-        const url = getSignedUrl(s3, command, { expiresIn: 60 * 5 })
-
-        return { url, key }
+            const command = new PutObjectCommand({
+                Bucket: process.env.bucket,
+                Key: key,
+                ContentType: 'audio/mp3'
+            })
+    
+            const url = await getSignedUrl(s3, command, { expiresIn: 60 * 5 })
+    
+            return { url, key }
+        } catch(error) {
+            throw new GraphQLError('Failed to create presigned url!')
+        }
 
     },
     async addPodcastToPodcastList(parent, args, contextValue, info) {
