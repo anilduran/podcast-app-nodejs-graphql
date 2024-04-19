@@ -7,8 +7,6 @@ interface IPlaylist {
     creator: mongoose.Types.ObjectId
     podcasts: Array<mongoose.Types.ObjectId>
     isDeleted: boolean
-    createdAt: Date
-    updatedAt: Date
     deletedAt: Date
 }
 
@@ -40,19 +38,11 @@ const playlistSchema = new mongoose.Schema<IPlaylist>({
         required: true,
         default: false
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-        required: true
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-        required: true
-    },
     deletedAt: {
         type: Date
     }
+}, {
+    timestamps: true
 })
 
 

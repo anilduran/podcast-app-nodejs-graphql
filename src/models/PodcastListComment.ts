@@ -2,8 +2,6 @@ import mongoose from "mongoose";
 
 interface IPodcastListComment {
     content: string
-    createdAt: Date
-    updatedAt: Date
     deletedAt: Date
     isDeleted: boolean
     user: mongoose.Types.ObjectId
@@ -14,16 +12,6 @@ const podcastListCommentSchema = new mongoose.Schema<IPodcastListComment>({
     content: {
         type: String,
         required: true
-    },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        required: true,
-        default: Date.now
     },
     deletedAt: {
         type: Date
@@ -43,6 +31,8 @@ const podcastListCommentSchema = new mongoose.Schema<IPodcastListComment>({
         required: true,
         ref: 'PodcastList'
     }
+}, {
+    timestamps: true
 });
 
 const PodcastListComment = mongoose.model<IPodcastListComment>('PodcastListComment', podcastListCommentSchema)

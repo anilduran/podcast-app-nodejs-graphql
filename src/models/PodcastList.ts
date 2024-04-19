@@ -9,8 +9,6 @@ interface IPodcastList {
     creator: mongoose.Types.ObjectId
     isVisible: boolean
     isDeleted: boolean
-    createdAt: Date
-    updatedAt: Date
     deletedAt: Date   
 }
 
@@ -55,19 +53,11 @@ const podcastListSchema = new mongoose.Schema<IPodcastList>({
         required: true,
         default: false
     },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
     deletedAt: {
         type: Date
     }
+}, {
+    timestamps: true
 })
 
 const PodcastList = mongoose.model<IPodcastList>('PodcastList', podcastListSchema)

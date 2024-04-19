@@ -13,6 +13,8 @@ const categorySchema = new mongoose.Schema<ICategory>({
     description: {
         type: String
     }
+}, {
+    timestamps: true
 })
 
 const Category = mongoose.model<ICategory>('Category', categorySchema)
