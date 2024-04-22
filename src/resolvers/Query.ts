@@ -9,18 +9,78 @@ import PodcastListComment from '../models/PodcastListComment';
 const Query = {
     async users(parent, args, contextValue, info) {
         authenticate(contextValue.token)
-        const users = await User.find()
-        return users
+
+        let query = {}
+
+        if (args.cursor) {
+            query = {
+                _id: { $gt: args.cursor }
+            }
+        }
+
+        const users = await User.find(query).limit(args.limit + 1).sort({ _id: 1 }).exec()
+
+        const hasNextPage = users.length > args.limit
+        const edges = hasNextPage ? users.slice(0, -1) : users
+        const endCursor = edges[edges.length - 1]?._id
+
+        return {
+            edges,
+            pageInfo: {
+                hasNextPage,
+                endCursor
+            }
+        }
     },
     async podcasts(parent, args, contextValue, info) {
         authenticate(contextValue.token)
-        const podcasts = await Podcast.find()
-        return podcasts
+
+        let query = {}
+
+        if (args.cursor) {
+            query = {
+                _id: { $gt: args.cursor }
+            }
+        }
+
+        const podcasts = await Podcast.find(query).limit(args.limit + 1).sort({ _id: 1 }).exec()
+
+        const hasNextPage = podcasts.length > args.limit
+        const edges = hasNextPage ? podcasts.slice(0, -1) : podcasts
+        const endCursor = edges[edges.length - 1]?._id
+
+        return {
+            edges,
+            pageInfo: {
+                hasNextPage,
+                endCursor
+            }
+        }
     },
     async podcastLists(parent, args, contextValue, info) {
         authenticate(contextValue.token)
-        const podcastLists = await PodcastList.find()
-        return podcastLists
+
+        let query = {}
+
+        if (args.cursor) {
+            query = {
+                _id: { $gt: args.cursor }
+            }
+        }
+
+        const podcastLists = await PodcastList.find(query).limit(args.limit + 1).sort({ _id: 1 }).exec()
+
+        const hasNextPage = podcastLists.length > args.limit
+        const edges = hasNextPage ? podcastLists.slice(0, -1) : podcastLists
+        const endCursor = edges[edges.length - 1]?._id
+
+        return {
+            edges,
+            pageInfo: {
+                hasNextPage,
+                endCursor
+            }
+        }
     },
     async categories(parent, args, contextValue, info) {
         authenticate(contextValue.token)
@@ -56,14 +116,54 @@ const Query = {
     },
     async podcastComments(parent, args, contextValue, info) {
         authenticate(contextValue.token)
-        const podcastComments = await PodcastComment.find()
-        return podcastComments
+
+        let query = {}
+
+        if (args.cursor) {
+            query = {
+                _id: { $gt: args.cursor }
+            }
+        }
+
+        const podcastComments = await PodcastComment.find(query).limit(args.limit + 1).sort({ _id: 1 }).exec()
+
+        const hasNextPage = podcastComments.length > args.limit
+        const edges = hasNextPage ? podcastComments.slice(0, -1) : podcastComments
+        const endCursor = edges[edges.length - 1]?._id
+
+        return {
+            edges,
+            pageInfo: {
+                hasNextPage,
+                endCursor
+            }
+        }
     },
     async podcastListComments(parent, args, contextValue, info) {
         authenticate(contextValue.token)
-        const podcastListComments = await PodcastListComment.find()
-        return podcastListComments
-    }
-};
 
-export { Query as default };
+        let query = {}
+
+        if (args.cursor) {
+            query = {
+                _id: { $gt: args.cursor }
+            }
+        }
+
+        const podcastListComments = await PodcastListComment.find(query).limit(args.limit + 1).sort({ _id: 1 }).exec()
+
+        const hasNextPage = podcastListComments.length > args.limit
+        const edges = hasNextPage ? podcastListComments.slice(0, -1) : podcastListComments
+        const endCursor = edges[edges.length - 1]?._id
+
+        return {
+            edges,
+            pageInfo: {
+                hasNextPage,
+                endCursor
+            }
+        }
+    }
+}
+
+export { Query as default }

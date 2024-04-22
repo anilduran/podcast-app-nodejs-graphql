@@ -64,7 +64,37 @@ type PageInfo {
 
 type CategoriesResult {
     edges: [Category!]!
-    pageInfo: PageInfo
+    pageInfo: PageInfo!
+}
+
+type PlaylistsResult {
+    edges: [Playlist!]!
+    pageInfo: PageInfo!
+}
+
+type PodcastListsResult {
+    edges: [PodcastList!]!
+    pageInfo: PageInfo!
+}
+
+type PodcastsResult {
+    edges: [Podcast!]!
+    pageInfo: PageInfo!
+}
+
+type UsersResult {
+    edges: [User!]!
+    pageInfo: PageInfo!
+}
+
+type PodcastCommentsResult {
+    edges: [PodcastComment!]!
+    pageInfo: PageInfo!
+}
+
+type PodcastListCommentsResult {
+    edges: [PodcastListComment!]!
+    pageInfo: PageInfo!
 }
 
 type User {
