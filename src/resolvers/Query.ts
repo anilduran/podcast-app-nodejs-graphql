@@ -24,8 +24,28 @@ const Query = {
     },
     async categories(parent, args, contextValue, info) {
         authenticate(contextValue.token)
-        const categories = await Category.find()
-        return categories
+        
+        let query = {}
+
+        if (args.cursor) {
+            query = {
+                _id: { $gt: args.cursor }
+            }
+        }
+        
+        const categories = await Category.find(query).limit(args.limit + 1).sort({ _id: 1 }).exec()
+
+        const hasNextPage = categories.length > args.limit
+        const edges = hasNextPage ? categories.slice(0, -1) : categories
+        const endCursor = edges[edges.length - 1]?._id
+
+        return {
+            edges,
+            pageInfo: {
+                hasNextPage,
+                endCursor
+            }
+        }
     },
     async me(parent, args, contextValue, info) {
         const authenticatedUser = authenticate(contextValue.token)

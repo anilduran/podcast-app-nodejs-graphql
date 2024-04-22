@@ -2,7 +2,7 @@ type Query {
     users: [User!]!
     podcasts: [Podcast!]!
     podcastLists: [PodcastList!]!
-    categories: [Category!]!
+    categories(cursor: ID, limit: Int!): CategoriesResult!
     me: User!
     podcastComments: [PodcastComment!]!
     podcastListComments: [PodcastListComment!]!
@@ -56,6 +56,16 @@ type Mutation {
 }
 
 scalar Date
+
+type PageInfo {
+    endCursor: ID!
+    hasNextPage: Boolean!
+}
+
+type CategoriesResult {
+    edges: [Category!]!
+    pageInfo: PageInfo
+}
 
 type User {
     id: ID!
