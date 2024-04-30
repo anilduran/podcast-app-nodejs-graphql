@@ -1,11 +1,11 @@
 type Query {
-    users: [User!]!
-    podcasts: [Podcast!]!
-    podcastLists: [PodcastList!]!
+    users(cursor: ID, limit: Int!): UsersResult!
+    podcasts(cursor: ID, limit: Int!): PodcastsResult!
+    podcastLists(cursor: ID, limit: Int!): PodcastListsResult!
     categories(cursor: ID, limit: Int!): CategoriesResult!
     me: User!
-    podcastComments: [PodcastComment!]!
-    podcastListComments: [PodcastListComment!]!
+    podcastComments(cursor: ID, limit: Int!): PodcastCommentsResult!
+    podcastListComments(cursor: ID, limit: Int!): PodcastListCommentsResult!
 }
 
 type Mutation {
@@ -58,7 +58,7 @@ type Mutation {
 scalar Date
 
 type PageInfo {
-    endCursor: ID!
+    endCursor: ID
     hasNextPage: Boolean!
 }
 
